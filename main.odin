@@ -30,6 +30,8 @@ lua_allocator :: proc "c" (ud: rawptr, ptr: rawptr, osize, nsize: c.size_t) -> (
 	}
 }
 
+ctx: runtime.Context
+
 main :: proc() {
 	_context := context
 	context.logger = log.create_console_logger()
@@ -47,9 +49,18 @@ main :: proc() {
 
 	lua_file, err := os.read_entire_file_from_filename_or_err(args[1])
 
+
 	ensure(err == nil)
 
 
+	lua.pushcfunction(state, proc "c" (L: ^lua.State) -> c.int {
+		n := lua.gettop(state)
+		context = ctx
+		fmt.println("Hello from odin, Argument count:", n)
+
+		return 0
+	})
+	lua.setglobal(state, "hello")
 	lua.L_dostring(state, strings.clone_to_cstring(transmute(string)lua_file))
 	str := lua.tostring(state, -1)
 	fmt.println(str)
