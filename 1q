@@ -8,7 +8,7 @@ import "core:fmt"
 import "core:os"
 import "core:strings"
 import lua "vendor:lua/5.4"
-import "vendor:wgpu"
+// import "vendor:wgpu"
 
 state: ^lua.State
 
