@@ -1,52 +1,49 @@
 ﻿// © 2021 NVIDIA Corporation
-package nri
+package nri_lib
 
 when ODIN_OS == .Linux {
 	foreign import lib {"libNRI.a", "libNRI_VK.a", "libNRI_Shared.a", "libNRI_Validation.a", "libNRI_NONE.a", "system:stdc++"}
 } else when ODIN_OS == .Windows {
-	foreign import lib {"libNRI.lib", "libNRI_VK.lib", "libNRI_Shared.lib", "libNRI_Validation.lib", "libNRI_NONE.lib"}
+	foreign import lib {"libNRI.lib", "libNRI_VK.lib", "libNRI_Shared.lib", "libNRI_Validation.lib", "libNRI_NONE.lib", "system:stdc++"}
 }
 
 
-NriFence            :: struct {} // a synchronization primitive that can be used to insert a dependency between queue operations or between a queue operation and the host
-NriQueue            :: struct {} // a logical queue, providing access to a HW queue
-NriMemory           :: struct {} // a memory blob allocated on DEVICE or HOST
-NriBuffer           :: struct {} // a buffer object: linear arrays of data
-NriDevice           :: struct {} // a logical device
-NriTexture          :: struct {} // a texture object: multidimensional arrays of data
-NriPipeline         :: struct {} // a collection of state needed for rendering: shaders + fixed
-NriSwapChain        :: struct {} // an array of presentable images that are associated with a surface
-NriQueryPool        :: struct {} // a collection of queries of the same type
-NriDescriptor       :: struct {} // a handle or pointer to a resource (potentially with a header)
-NriCommandBuffer    :: struct {} // used to record commands which can be subsequently submitted to a device queue for execution (aka command list)
-NriDescriptorSet    :: struct {} // a continuous set of descriptors
-NriDescriptorPool   :: struct {} // maintains a pool of descriptors, descriptor sets are allocated from (aka descriptor heap)
-NriPipelineLayout   :: struct {} // determines the interface between shader stages and shader resources (aka root signature)
-NriCommandAllocator :: struct {} // an object that command buffer memory is allocated from
+Fence            :: struct {} // a synchronization primitive that can be used to insert a dependency between queue operations or between a queue operation and the host
+Queue            :: struct {} // a logical queue, providing access to a HW queue
+Memory           :: struct {} // a memory blob allocated on DEVICE or HOST
+Buffer           :: struct {} // a buffer object: linear arrays of data
+Device           :: struct {} // a logical device
+Texture          :: struct {} // a texture object: multidimensional arrays of data
+Pipeline         :: struct {} // a collection of state needed for rendering: shaders + fixed
+SwapChain        :: struct {} // an array of presentable images that are associated with a surface
+QueryPool        :: struct {} // a collection of queries of the same type
+Descriptor       :: struct {} // a handle or pointer to a resource (potentially with a header)
+CommandBuffer    :: struct {} // used to record commands which can be subsequently submitted to a device queue for execution (aka command list)
+DescriptorSet    :: struct {} // a continuous set of descriptors
+DescriptorPool   :: struct {} // maintains a pool of descriptors, descriptor sets are allocated from (aka descriptor heap)
+PipelineLayout   :: struct {} // determines the interface between shader stages and shader resources (aka root signature)
+CommandAllocator :: struct {} // an object that command buffer memory is allocated from
 
 // Basic types
-NriSample_t :: u8
-NriDim_t    :: u16
-NriObject   :: struct {}
+Sample_t :: u8
+Dim_t    :: u16
+Object   :: struct {}
 
-NriUid_t :: struct {
+Uid_t :: struct {
 	low:  u64,
 	high: u64,
 }
 
-NriDim2_t :: struct {
-	w, h: NriDim_t,
+Dim2_t :: struct {
+	w, h: Dim_t,
 }
 
-NriFloat2_t :: struct {
+Float2_t :: struct {
 	x, y: f32,
 }
 
 //============================================================================================================================================================================================
-NriGraphicsAPI :: u8
-
-//============================================================================================================================================================================================
-NriGraphicsAPI_ :: enum u32 {
+GraphicsAPI :: enum u32 {
 	//============================================================================================================================================================================================
 	NONE    = 0,
 
@@ -63,9 +60,7 @@ NriGraphicsAPI_ :: enum u32 {
 	MAX_NUM = 4,
 }
 
-NriResult :: i8
-
-NriResult_ :: enum i32 {
+Result :: enum i32 {
 	DEVICE_LOST      = -3,
 	OUT_OF_DATE      = -2,
 	INVALID_SDK      = -1,
@@ -80,7 +75,7 @@ NriResult_ :: enum i32 {
 // The viewport origin is top-left (D3D native) by default, but can be changed to bottom-left (VK native)
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkViewport.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_viewport
-NriViewport :: struct {
+Viewport :: struct {
 	x:                f32,
 	y:                f32,
 	width:            f32,
@@ -91,42 +86,42 @@ NriViewport :: struct {
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkRect2D.html
-NriRect :: struct {
+Rect :: struct {
 	x:      i16,
 	y:      i16,
-	width:  NriDim_t,
-	height: NriDim_t,
+	width:  Dim_t,
+	height: Dim_t,
 }
 
-NriColor32f :: struct {
+Color32f :: struct {
 	x, y, z, w: f32,
 }
 
-NriColor32ui :: struct {
+Color32ui :: struct {
 	x, y, z, w: u32,
 }
 
-NriColor32i :: struct {
+Color32i :: struct {
 	x, y, z, w: i32,
 }
 
-NriDepthStencil :: struct {
+DepthStencil :: struct {
 	depth:   f32,
 	stencil: u8,
 }
 
-NriColor :: struct #raw_union {
-	f:  NriColor32f,
-	ui: NriColor32ui,
-	i:  NriColor32i,
+Color :: struct #raw_union {
+	f:  Color32f,
+	ui: Color32ui,
+	i:  Color32i,
 }
 
-NriClearValue :: struct #raw_union {
-	depthStencil: NriDepthStencil,
-	color:        NriColor,
+ClearValue :: struct #raw_union {
+	depthStencil: DepthStencil,
+	color:        Color,
 }
 
-NriSampleLocation :: struct {
+SampleLocation :: struct {
 	x, y: i8, // [-8; 7]
 }
 
@@ -147,7 +142,7 @@ NriSampleLocation :: struct {
 //                                    TEXTURE  |  |  |  |  |  |  |  |  |
 //                                          |  |  |  |  |  |  |  |  |  |
 //                                          |    FormatSupportBits     |
-NriFormat_ :: enum u32 {
+Format :: enum u32 {
 	// left -> right : low -> high bits
 	// Expected (but not guaranteed) "FormatSupportBits" are provided, but "GetFormatSupport" should be used for querying real HW support
 	// To demote sRGB use the previous format, i.e. "format - 1"
@@ -1390,172 +1385,135 @@ NriFormat_ :: enum u32 {
 	MAX_NUM                = 72,
 }
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkFormat.html
-// https://learn.microsoft.com/en-us/windows/win32/api/dxgiformat/ne-dxgiformat-dxgi_format
-// left -> right : low -> high bits
-// Expected (but not guaranteed) "FormatSupportBits" are provided, but "GetFormatSupport" should be used for querying real HW support
-// To demote sRGB use the previous format, i.e. "format - 1"
-//                                                STORAGE_BUFFER_ATOMICS
-//                                                      VERTEX_BUFFER  |
-//                                                  STORAGE_BUFFER  |  |
-//                                                       BUFFER  |  |  |
-//                                   STORAGE_TEXTURE_ATOMICS  |  |  |  |
-//                                                  BLEND  |  |  |  |  |
-//                            DEPTH_STENCIL_ATTACHMENT  |  |  |  |  |  |
-//                                 COLOR_ATTACHMENT  |  |  |  |  |  |  |
-//                               STORAGE_TEXTURE  |  |  |  |  |  |  |  |
-//                                    TEXTURE  |  |  |  |  |  |  |  |  |
-//                                          |  |  |  |  |  |  |  |  |  |
-//                                          |    FormatSupportBits     |
-NriFormat :: u8
+PlaneBits_ :: enum u32 {
+	COLOR   = 0,
+	DEPTH   = 1,
+	STENCIL = 2,
+}
 
 // https://learn.microsoft.com/en-us/windows/win32/direct3d12/subresources#plane-slice
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkImageAspectFlagBits.html
-NriPlaneBits :: u8
+PlaneBits :: bit_set[PlaneBits_; i32]
 
-// https://learn.microsoft.com/en-us/windows/win32/direct3d12/subresources#plane-slice
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkImageAspectFlagBits.html
-NriPlaneBits_ :: enum u32 {
-	ALL     = 0,
-	COLOR   = 1,
-	DEPTH   = 2,
-	STENCIL = 4,
+FormatSupportBits_ :: enum u32 {
+	// A bit represents a feature, supported by a format
+	TEXTURE                      = 0,
+
+	// A bit represents a feature, supported by a format
+	STORAGE_TEXTURE              = 1,
+
+	// A bit represents a feature, supported by a format
+	STORAGE_TEXTURE_ATOMICS      = 2,
+
+	// A bit represents a feature, supported by a format
+	COLOR_ATTACHMENT             = 3,
+
+	// A bit represents a feature, supported by a format
+	DEPTH_STENCIL_ATTACHMENT     = 4,
+
+	// A bit represents a feature, supported by a format
+	BLEND                        = 5,
+
+	// A bit represents a feature, supported by a format
+	MULTISAMPLE_2X               = 6,
+
+	// A bit represents a feature, supported by a format
+	MULTISAMPLE_4X               = 7,
+
+	// A bit represents a feature, supported by a format
+	MULTISAMPLE_8X               = 8,
+
+	// A bit represents a feature, supported by a format
+	BUFFER                       = 9,
+
+	// A bit represents a feature, supported by a format
+	STORAGE_BUFFER               = 10,
+
+	// A bit represents a feature, supported by a format
+	STORAGE_BUFFER_ATOMICS       = 11,
+
+	// A bit represents a feature, supported by a format
+	VERTEX_BUFFER                = 12,
+
+	// A bit represents a feature, supported by a format
+	STORAGE_READ_WITHOUT_FORMAT  = 13,
+
+	// A bit represents a feature, supported by a format
+	STORAGE_WRITE_WITHOUT_FORMAT = 14,
 }
 
 // A bit represents a feature, supported by a format
-NriFormatSupportBits :: u16
+FormatSupportBits :: bit_set[FormatSupportBits_; i32]
 
-// A bit represents a feature, supported by a format
-NriFormatSupportBits_ :: enum u32 {
-	// A bit represents a feature, supported by a format
-	UNSUPPORTED                  = 0,
-
-	// A bit represents a feature, supported by a format
-	TEXTURE                      = 1,
-
-	// A bit represents a feature, supported by a format
-	STORAGE_TEXTURE              = 2,
-
-	// A bit represents a feature, supported by a format
-	STORAGE_TEXTURE_ATOMICS      = 4,
-
-	// A bit represents a feature, supported by a format
-	COLOR_ATTACHMENT             = 8,
-
-	// A bit represents a feature, supported by a format
-	DEPTH_STENCIL_ATTACHMENT     = 16,
-
-	// A bit represents a feature, supported by a format
-	BLEND                        = 32,
-
-	// A bit represents a feature, supported by a format
-	MULTISAMPLE_2X               = 64,
-
-	// A bit represents a feature, supported by a format
-	MULTISAMPLE_4X               = 128,
-
-	// A bit represents a feature, supported by a format
-	MULTISAMPLE_8X               = 256,
-
-	// A bit represents a feature, supported by a format
-	BUFFER                       = 512,
-
-	// A bit represents a feature, supported by a format
-	STORAGE_BUFFER               = 1024,
-
-	// A bit represents a feature, supported by a format
-	STORAGE_BUFFER_ATOMICS       = 2048,
-
-	// A bit represents a feature, supported by a format
-	VERTEX_BUFFER                = 4096,
-
-	// A bit represents a feature, supported by a format
-	STORAGE_READ_WITHOUT_FORMAT  = 8192,
-
-	// A bit represents a feature, supported by a format
-	STORAGE_WRITE_WITHOUT_FORMAT = 16384,
+StageBits_ :: enum u32 {
+	INDEX_INPUT              = 0,
+	VERTEX_SHADER            = 1,
+	TESS_CONTROL_SHADER      = 2,
+	TESS_EVALUATION_SHADER   = 3,
+	GEOMETRY_SHADER          = 4,
+	TASK_SHADER              = 5,
+	MESH_SHADER              = 6,
+	FRAGMENT_SHADER          = 7,
+	DEPTH_STENCIL_ATTACHMENT = 8,
+	COLOR_ATTACHMENT         = 9,
+	COMPUTE_SHADER           = 10,
+	RAYGEN_SHADER            = 11,
+	MISS_SHADER              = 12,
+	INTERSECTION_SHADER      = 13,
+	CLOSEST_HIT_SHADER       = 14,
+	ANY_HIT_SHADER           = 15,
+	CALLABLE_SHADER          = 16,
+	ACCELERATION_STRUCTURE   = 17,
+	MICROMAP                 = 18,
+	COPY                     = 19,
+	RESOLVE                  = 20,
+	CLEAR_STORAGE            = 21,
+	INDIRECT                 = 22,
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineStageFlagBits2.html
 // https://microsoft.github.io/DirectX-Specs/d3d/D3D12EnhancedBarriers.html#d3d12_barrier_sync
-NriStageBits :: u32
+StageBits                      :: bit_set[StageBits_; i32]
+STAGEBITS_GRAPHICS             :: StageBits {.INDEX_INPUT, .VERTEX_SHADER, .TESS_CONTROL_SHADER, .TESS_EVALUATION_SHADER, .GEOMETRY_SHADER, .TASK_SHADER, .MESH_SHADER, .FRAGMENT_SHADER, .DEPTH_STENCIL_ATTACHMENT, .COLOR_ATTACHMENT}
+STAGEBITS_ALL_SHADERS          :: StageBits {.VERTEX_SHADER, .TESS_CONTROL_SHADER, .TESS_EVALUATION_SHADER, .GEOMETRY_SHADER, .TASK_SHADER, .MESH_SHADER, .FRAGMENT_SHADER, .COMPUTE_SHADER, .RAYGEN_SHADER, .MISS_SHADER, .INTERSECTION_SHADER, .CLOSEST_HIT_SHADER, .ANY_HIT_SHADER, .CALLABLE_SHADER}
+STAGEBITS_RAY_TRACING_SHADERS  :: StageBits {.RAYGEN_SHADER, .MISS_SHADER, .INTERSECTION_SHADER, .CLOSEST_HIT_SHADER, .ANY_HIT_SHADER, .CALLABLE_SHADER}
+STAGEBITS_GRAPHICS_SHADERS     :: StageBits {.VERTEX_SHADER, .TESS_CONTROL_SHADER, .TESS_EVALUATION_SHADER, .GEOMETRY_SHADER, .TASK_SHADER, .MESH_SHADER, .FRAGMENT_SHADER}
+STAGEBITS_TESSELLATION_SHADERS :: StageBits {.TESS_CONTROL_SHADER, .TESS_EVALUATION_SHADER}
+STAGEBITS_NONE                 :: StageBits {.INDEX_INPUT, .VERTEX_SHADER, .TESS_CONTROL_SHADER, .TESS_EVALUATION_SHADER, .GEOMETRY_SHADER, .TASK_SHADER, .MESH_SHADER, .FRAGMENT_SHADER, .DEPTH_STENCIL_ATTACHMENT, .COLOR_ATTACHMENT, .COMPUTE_SHADER, .RAYGEN_SHADER, .MISS_SHADER, .INTERSECTION_SHADER, .CLOSEST_HIT_SHADER, .ANY_HIT_SHADER, .CALLABLE_SHADER, .ACCELERATION_STRUCTURE, .MICROMAP, .COPY, .RESOLVE, .CLEAR_STORAGE, .INDIRECT}
+STAGEBITS_MESH_SHADERS         :: StageBits {.TASK_SHADER, .MESH_SHADER}
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineStageFlagBits2.html
-// https://microsoft.github.io/DirectX-Specs/d3d/D3D12EnhancedBarriers.html#d3d12_barrier_sync
-NriStageBits_ :: enum u32 {
-	ALL                      = 0,
-	NONE                     = 2147483647,
-	INDEX_INPUT              = 1,
-	VERTEX_SHADER            = 2,
-	TESS_CONTROL_SHADER      = 4,
-	TESS_EVALUATION_SHADER   = 8,
-	GEOMETRY_SHADER          = 16,
-	TASK_SHADER              = 32,
-	MESH_SHADER              = 64,
-	FRAGMENT_SHADER          = 128,
-	DEPTH_STENCIL_ATTACHMENT = 256,
-	COLOR_ATTACHMENT         = 512,
-	COMPUTE_SHADER           = 1024,
-	RAYGEN_SHADER            = 2048,
-	MISS_SHADER              = 4096,
-	INTERSECTION_SHADER      = 8192,
-	CLOSEST_HIT_SHADER       = 16384,
-	ANY_HIT_SHADER           = 32768,
-	CALLABLE_SHADER          = 65536,
-	ACCELERATION_STRUCTURE   = 131072,
-	MICROMAP                 = 262144,
-	COPY                     = 524288,
-	RESOLVE                  = 1048576,
-	CLEAR_STORAGE            = 2097152,
-	INDIRECT                 = 4194304,
-	TESSELLATION_SHADERS     = 12,
-	MESH_SHADERS             = 96,
-	GRAPHICS_SHADERS         = 254,
-	RAY_TRACING_SHADERS      = 129024,
-	ALL_SHADERS              = 130302,
-	GRAPHICS                 = 1023,
+AccessBits_ :: enum u32 {
+	INDEX_BUFFER                   = 0,
+	VERTEX_BUFFER                  = 1,
+	CONSTANT_BUFFER                = 2,
+	ARGUMENT_BUFFER                = 3,
+	SCRATCH_BUFFER                 = 4,
+	COLOR_ATTACHMENT               = 5,
+	SHADING_RATE_ATTACHMENT        = 6,
+	DEPTH_STENCIL_ATTACHMENT_READ  = 7,
+	DEPTH_STENCIL_ATTACHMENT_WRITE = 8,
+	ACCELERATION_STRUCTURE_READ    = 9,
+	ACCELERATION_STRUCTURE_WRITE   = 10,
+	MICROMAP_READ                  = 11,
+	MICROMAP_WRITE                 = 12,
+	SHADER_RESOURCE                = 13,
+	SHADER_RESOURCE_STORAGE        = 14,
+	SHADER_BINDING_TABLE           = 15,
+	COPY_SOURCE                    = 16,
+	COPY_DESTINATION               = 17,
+	RESOLVE_SOURCE                 = 18,
+	RESOLVE_DESTINATION            = 19,
+	CLEAR_STORAGE                  = 20,
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkAccessFlagBits2.html
 // https://microsoft.github.io/DirectX-Specs/d3d/D3D12EnhancedBarriers.html#d3d12_barrier_access
-NriAccessBits :: u32
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkAccessFlagBits2.html
-// https://microsoft.github.io/DirectX-Specs/d3d/D3D12EnhancedBarriers.html#d3d12_barrier_access
-NriAccessBits_ :: enum u32 {
-	NONE                           = 0,
-	INDEX_BUFFER                   = 1,
-	VERTEX_BUFFER                  = 2,
-	CONSTANT_BUFFER                = 4,
-	ARGUMENT_BUFFER                = 8,
-	SCRATCH_BUFFER                 = 16,
-	COLOR_ATTACHMENT               = 32,
-	SHADING_RATE_ATTACHMENT        = 64,
-	DEPTH_STENCIL_ATTACHMENT_READ  = 128,
-	DEPTH_STENCIL_ATTACHMENT_WRITE = 256,
-	ACCELERATION_STRUCTURE_READ    = 512,
-	ACCELERATION_STRUCTURE_WRITE   = 1024,
-	MICROMAP_READ                  = 2048,
-	MICROMAP_WRITE                 = 4096,
-	SHADER_RESOURCE                = 8192,
-	SHADER_RESOURCE_STORAGE        = 16384,
-	SHADER_BINDING_TABLE           = 32768,
-	COPY_SOURCE                    = 65536,
-	COPY_DESTINATION               = 131072,
-	RESOLVE_SOURCE                 = 262144,
-	RESOLVE_DESTINATION            = 524288,
-	CLEAR_STORAGE                  = 1048576,
-}
+AccessBits :: bit_set[AccessBits_; i32]
 
 // "Layout" is ignored if "features.enhancedBarriers" is not supported
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkImageLayout.html
 // https://microsoft.github.io/DirectX-Specs/d3d/D3D12EnhancedBarriers.html#d3d12_barrier_layout
-NriLayout :: u8 // Compatible "AccessBits":
-
-// "Layout" is ignored if "features.enhancedBarriers" is not supported
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkImageLayout.html
-// https://microsoft.github.io/DirectX-Specs/d3d/D3D12EnhancedBarriers.html#d3d12_barrier_layout
-NriLayout_ :: enum u32 {
+Layout :: enum u32 {
 	UNDEFINED                = 0,  // Compatible "AccessBits":
 	GENERAL                  = 1,  // Compatible "AccessBits":
 	PRESENT                  = 2,  // Compatible "AccessBits":
@@ -1572,57 +1530,53 @@ NriLayout_ :: enum u32 {
 	MAX_NUM                  = 13, // Compatible "AccessBits":
 } // Compatible "AccessBits":
 
-NriAccessStage :: struct {
-	access: NriAccessBits,
-	stages: NriStageBits,
+AccessStage :: struct {
+	access: AccessBits,
+	stages: StageBits,
 }
 
-NriAccessLayoutStage :: struct {
-	access: NriAccessBits,
-	layout: NriLayout,
-	stages: NriStageBits,
+AccessLayoutStage :: struct {
+	access: AccessBits,
+	layout: Layout,
+	stages: StageBits,
 }
 
-NriGlobalBarrierDesc :: struct {
-	before: NriAccessStage,
-	after:  NriAccessStage,
+GlobalBarrierDesc :: struct {
+	before: AccessStage,
+	after:  AccessStage,
 }
 
-NriBufferBarrierDesc :: struct {
-	buffer: ^NriBuffer, // use "GetAccelerationStructureBuffer" and "GetMicromapBuffer" for related barriers
-	before: NriAccessStage,
-	after:  NriAccessStage,
+BufferBarrierDesc :: struct {
+	buffer: ^Buffer, // use "GetAccelerationStructureBuffer" and "GetMicromapBuffer" for related barriers
+	before: AccessStage,
+	after:  AccessStage,
 }
 
-NriTextureBarrierDesc :: struct {
-	texture:     ^NriTexture,
-	before:      NriAccessLayoutStage,
-	after:       NriAccessLayoutStage,
-	mipOffset:   NriDim_t,
-	mipNum:      NriDim_t, // can be "REMAINING"
-	layerOffset: NriDim_t,
-	layerNum:    NriDim_t, // can be "REMAINING"
-	planes:      NriPlaneBits,
-	srcQueue:    ^NriQueue,
-	dstQueue:    ^NriQueue,
+TextureBarrierDesc :: struct {
+	texture:     ^Texture,
+	before:      AccessLayoutStage,
+	after:       AccessLayoutStage,
+	mipOffset:   Dim_t,
+	mipNum:      Dim_t, // can be "REMAINING"
+	layerOffset: Dim_t,
+	layerNum:    Dim_t, // can be "REMAINING"
+	planes:      PlaneBits,
+	srcQueue:    ^Queue,
+	dstQueue:    ^Queue,
 }
 
-NriBarrierDesc :: struct {
-	globals:    ^NriGlobalBarrierDesc,
+BarrierDesc :: struct {
+	globals:    ^GlobalBarrierDesc,
 	globalNum:  u32,
-	buffers:    ^NriBufferBarrierDesc,
+	buffers:    ^BufferBarrierDesc,
 	bufferNum:  u32,
-	textures:   ^NriTextureBarrierDesc,
+	textures:   ^TextureBarrierDesc,
 	textureNum: u32,
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkImageType.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_resource_dimension
-NriTextureType :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkImageType.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_resource_dimension
-NriTextureType_ :: enum u32 {
+TextureType :: enum u32 {
 	TEXTURE_1D = 0,
 	TEXTURE_2D = 1,
 	TEXTURE_3D = 2,
@@ -1634,67 +1588,55 @@ NriTextureType_ :: enum u32 {
 // - VK: use "EXCLUSIVE" for attachments participating into multi-queue activities to preserve DCC (Delta Color Compression) on some HW
 // - D3D12: use "SIMULTANEOUS" to concurrently use a texture as a "SHADER_RESOURCE" (or "SHADER_RESOURCE_STORAGE") and as a "COPY_DESTINATION" for non overlapping texture regions
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkSharingMode.html
-NriSharingMode_ :: enum u32 {
+SharingMode :: enum u32 {
 	CONCURRENT   = 0,
 	EXCLUSIVE    = 1,
 	SIMULTANEOUS = 2,
 	MAX_NUM      = 3,
 }
 
-// NRI tries to ease your life and avoid using "queue ownership transfers" (see "TextureBarrierDesc").
-// In most of cases "SharingMode" can be ignored. Where is it needed?
-// - VK: use "EXCLUSIVE" for attachments participating into multi-queue activities to preserve DCC (Delta Color Compression) on some HW
-// - D3D12: use "SIMULTANEOUS" to concurrently use a texture as a "SHADER_RESOURCE" (or "SHADER_RESOURCE_STORAGE") and as a "COPY_DESTINATION" for non overlapping texture regions
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkSharingMode.html
-NriSharingMode :: u8
+TextureUsageBits_ :: enum u32 {
+	SHADER_RESOURCE          = 0, // Min compatible access:                  Usage:
+	SHADER_RESOURCE_STORAGE  = 1, // Min compatible access:                  Usage:
+	COLOR_ATTACHMENT         = 2, // Min compatible access:                  Usage:
+	DEPTH_STENCIL_ATTACHMENT = 3, // Min compatible access:                  Usage:
+	SHADING_RATE_ATTACHMENT  = 4, // Min compatible access:                  Usage:
+}
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkImageUsageFlagBits.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_resource_flags
-NriTextureUsageBits_ :: enum u32 {
-	NONE                     = 0,  // Min compatible access:                  Usage:
-	SHADER_RESOURCE          = 1,  // Min compatible access:                  Usage:
-	SHADER_RESOURCE_STORAGE  = 2,  // Min compatible access:                  Usage:
-	COLOR_ATTACHMENT         = 4,  // Min compatible access:                  Usage:
-	DEPTH_STENCIL_ATTACHMENT = 8,  // Min compatible access:                  Usage:
-	SHADING_RATE_ATTACHMENT  = 16, // Min compatible access:                  Usage:
-} // Min compatible access:                  Usage:
+TextureUsageBits :: bit_set[TextureUsageBits_; i32] // Min compatible access:                  Usage:
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkImageUsageFlagBits.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_resource_flags
-NriTextureUsageBits :: u8 // Min compatible access:                  Usage:
+BufferUsageBits_ :: enum u32 {
+	SHADER_RESOURCE                    = 0,  // Min compatible access:                  Usage:
+	SHADER_RESOURCE_STORAGE            = 1,  // Min compatible access:                  Usage:
+	VERTEX_BUFFER                      = 2,  // Min compatible access:                  Usage:
+	INDEX_BUFFER                       = 3,  // Min compatible access:                  Usage:
+	CONSTANT_BUFFER                    = 4,  // Min compatible access:                  Usage:
+	ARGUMENT_BUFFER                    = 5,  // Min compatible access:                  Usage:
+	SCRATCH_BUFFER                     = 6,  // Min compatible access:                  Usage:
+	SHADER_BINDING_TABLE               = 7,  // Min compatible access:                  Usage:
+	ACCELERATION_STRUCTURE_BUILD_INPUT = 8,  // Min compatible access:                  Usage:
+	ACCELERATION_STRUCTURE_STORAGE     = 9,  // Min compatible access:                  Usage:
+	MICROMAP_BUILD_INPUT               = 10, // Min compatible access:                  Usage:
+	MICROMAP_STORAGE                   = 11, // Min compatible access:                  Usage:
+}
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkBufferUsageFlagBits.html
-NriBufferUsageBits :: u16 // Min compatible access:                  Usage:
+BufferUsageBits :: bit_set[BufferUsageBits_; i32] // Min compatible access:                  Usage:
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkBufferUsageFlagBits.html
-NriBufferUsageBits_ :: enum u32 {
-	NONE                               = 0,    // Min compatible access:                  Usage:
-	SHADER_RESOURCE                    = 1,    // Min compatible access:                  Usage:
-	SHADER_RESOURCE_STORAGE            = 2,    // Min compatible access:                  Usage:
-	VERTEX_BUFFER                      = 4,    // Min compatible access:                  Usage:
-	INDEX_BUFFER                       = 8,    // Min compatible access:                  Usage:
-	CONSTANT_BUFFER                    = 16,   // Min compatible access:                  Usage:
-	ARGUMENT_BUFFER                    = 32,   // Min compatible access:                  Usage:
-	SCRATCH_BUFFER                     = 64,   // Min compatible access:                  Usage:
-	SHADER_BINDING_TABLE               = 128,  // Min compatible access:                  Usage:
-	ACCELERATION_STRUCTURE_BUILD_INPUT = 256,  // Min compatible access:                  Usage:
-	ACCELERATION_STRUCTURE_STORAGE     = 512,  // Min compatible access:                  Usage:
-	MICROMAP_BUILD_INPUT               = 1024, // Min compatible access:                  Usage:
-	MICROMAP_STORAGE                   = 2048, // Min compatible access:                  Usage:
-} // Min compatible access:                  Usage:
-
-NriTextureDesc :: struct {
-	type:                NriTextureType,
-	usage:               NriTextureUsageBits,
-	format:              NriFormat,
-	width:               NriDim_t,
-	height:              NriDim_t,
-	depth:               NriDim_t,
-	mipNum:              NriDim_t,
-	layerNum:            NriDim_t,
-	sampleNum:           NriSample_t,
-	sharingMode:         NriSharingMode,
-	optimizedClearValue: NriClearValue, // D3D12: not needed on desktop, since any HW can track many clear values
+TextureDesc :: struct {
+	type:                TextureType,
+	usage:               TextureUsageBits,
+	format:              Format,
+	width:               Dim_t,
+	height:              Dim_t,
+	depth:               Dim_t,
+	mipNum:              Dim_t,
+	layerNum:            Dim_t,
+	sampleNum:           Sample_t,
+	sharingMode:         SharingMode,
+	optimizedClearValue: ClearValue, // D3D12: not needed on desktop, since any HW can track many clear values
 }
 
 // "structureStride" values:
@@ -1702,20 +1644,17 @@ NriTextureDesc :: struct {
 // 4  = allows "typed", "byte address" (raw) and "structured" views (D3D11: allows to create multiple "structured" views for a single resource, disobeying the spec)
 // >4 = allows "structured" and potentially "typed" views (D3D11: locks this buffer to a single "structured" layout, no "typed" views)
 // VK: buffers always created with sharing mode "CONCURRENT" to match D3D12 spec
-NriBufferDesc :: struct {
+BufferDesc :: struct {
 	size:            u64,
 	structureStride: u32,
-	usage:           NriBufferUsageBits,
+	usage:           BufferUsageBits,
 }
 
 // Contains some encoded implementation specific details
-NriMemoryType :: u32
+MemoryType :: u32
 
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_heap_type
-NriMemoryLocation :: u8
-
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_heap_type
-NriMemoryLocation_ :: enum u32 {
+MemoryLocation :: enum u32 {
 	DEVICE        = 0,
 	DEVICE_UPLOAD = 1,
 	HOST_UPLOAD   = 2,
@@ -1724,39 +1663,36 @@ NriMemoryLocation_ :: enum u32 {
 }
 
 // Memory requirements for a resource (buffer or texture)
-NriMemoryDesc :: struct {
+MemoryDesc :: struct {
 	size:            u64,
 	alignment:       u32,
-	type:            NriMemoryType,
+	type:            MemoryType,
 	mustBeDedicated: bool, // must be put into a dedicated "Memory" object, containing only 1 object with offset = 0
 }
 
 // A group of non-dedicated "MemoryDesc"s of the SAME "MemoryType" can be merged into a single memory allocation
-NriAllocateMemoryDesc :: struct {
+AllocateMemoryDesc :: struct {
 	size:     u64,
-	type:     NriMemoryType,
+	type:     MemoryType,
 	priority: f32, // [-1; 1]: low < 0, normal = 0, high > 0
 	useVMA:   bool,
 }
 
 // Binding resources to a memory (resources can overlap, i.e. alias)
-NriBindBufferMemoryDesc :: struct {
-	buffer: ^NriBuffer,
-	memory: ^NriMemory,
+BindBufferMemoryDesc :: struct {
+	buffer: ^Buffer,
+	memory: ^Memory,
 	offset: u64, // in memory
 }
 
-NriBindTextureMemoryDesc :: struct {
-	texture: ^NriTexture,
-	memory:  ^NriMemory,
+BindTextureMemoryDesc :: struct {
+	texture: ^Texture,
+	memory:  ^Memory,
 	offset:  u64, // in memory
 }
 
 // https://microsoft.github.io/DirectX-Specs/d3d/ResourceBinding.html#creating-descriptors
-NriTexture1DViewType :: u8
-
-// https://microsoft.github.io/DirectX-Specs/d3d/ResourceBinding.html#creating-descriptors
-NriTexture1DViewType_ :: enum u32 {
+Texture1DViewType :: enum u32 {
 	SHADER_RESOURCE_1D                = 0,
 	SHADER_RESOURCE_1D_ARRAY          = 1,
 	SHADER_RESOURCE_STORAGE_1D        = 2,
@@ -1769,9 +1705,7 @@ NriTexture1DViewType_ :: enum u32 {
 	MAX_NUM                           = 9,
 }
 
-NriTexture2DViewType :: u8
-
-NriTexture2DViewType_ :: enum u32 {
+Texture2DViewType :: enum u32 {
 	SHADER_RESOURCE_2D                = 0,
 	SHADER_RESOURCE_2D_ARRAY          = 1,
 	SHADER_RESOURCE_CUBE              = 2,
@@ -1787,18 +1721,14 @@ NriTexture2DViewType_ :: enum u32 {
 	MAX_NUM                           = 12,
 }
 
-NriTexture3DViewType :: u8
-
-NriTexture3DViewType_ :: enum u32 {
+Texture3DViewType :: enum u32 {
 	SHADER_RESOURCE_3D         = 0,
 	SHADER_RESOURCE_STORAGE_3D = 1,
 	COLOR_ATTACHMENT           = 2,
 	MAX_NUM                    = 3,
 }
 
-NriBufferViewType :: u8
-
-NriBufferViewType_ :: enum u32 {
+BufferViewType :: enum u32 {
 	SHADER_RESOURCE         = 0,
 	SHADER_RESOURCE_STORAGE = 1,
 	CONSTANT                = 2,
@@ -1808,22 +1738,14 @@ NriBufferViewType_ :: enum u32 {
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkFilter.html
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkSamplerMipmapMode.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_filter
-NriFilter_ :: enum u32 {
+Filter :: enum u32 {
 	NEAREST = 0,
 	LINEAR  = 1,
 	MAX_NUM = 2,
 }
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkFilter.html
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkSamplerMipmapMode.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_filter
-NriFilter :: u8
-
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkSamplerReductionMode.html
-NriReductionMode :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkSamplerReductionMode.html
-NriReductionMode_ :: enum u32 {
+ReductionMode :: enum u32 {
 	AVERAGE = 0,
 	MIN     = 1,
 	MAX     = 2,
@@ -1832,11 +1754,7 @@ NriReductionMode_ :: enum u32 {
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkSamplerAddressMode.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_texture_address_mode
-NriAddressMode :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkSamplerAddressMode.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_texture_address_mode
-NriAddressMode_ :: enum u32 {
+AddressMode :: enum u32 {
 	REPEAT               = 0,
 	MIRRORED_REPEAT      = 1,
 	CLAMP_TO_EDGE        = 2,
@@ -1849,7 +1767,7 @@ NriAddressMode_ :: enum u32 {
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_comparison_func
 // R - fragment depth, stencil reference or "SampleCmp" reference
 // D - depth or stencil buffer
-NriCompareOp_ :: enum u32 {
+CompareOp :: enum u32 {
 	// R - fragment depth, stencil reference or "SampleCmp" reference
 	// D - depth or stencil buffer
 	NONE          = 0,
@@ -1891,77 +1809,71 @@ NriCompareOp_ :: enum u32 {
 	MAX_NUM       = 9,
 }
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkCompareOp.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_comparison_func
-// R - fragment depth, stencil reference or "SampleCmp" reference
-// D - depth or stencil buffer
-NriCompareOp :: u8
-
-NriTexture1DViewDesc :: struct {
-	texture:     ^NriTexture,
-	viewType:    NriTexture1DViewType,
-	format:      NriFormat,
-	mipOffset:   NriDim_t,
-	mipNum:      NriDim_t, // can be "REMAINING"
-	layerOffset: NriDim_t,
-	layerNum:    NriDim_t, // can be "REMAINING"
+Texture1DViewDesc :: struct {
+	texture:     ^Texture,
+	viewType:    Texture1DViewType,
+	format:      Format,
+	mipOffset:   Dim_t,
+	mipNum:      Dim_t, // can be "REMAINING"
+	layerOffset: Dim_t,
+	layerNum:    Dim_t, // can be "REMAINING"
 }
 
-NriTexture2DViewDesc :: struct {
-	texture:     ^NriTexture,
-	viewType:    NriTexture2DViewType,
-	format:      NriFormat,
-	mipOffset:   NriDim_t,
-	mipNum:      NriDim_t, // can be "REMAINING"
-	layerOffset: NriDim_t,
-	layerNum:    NriDim_t, // can be "REMAINING"
+Texture2DViewDesc :: struct {
+	texture:     ^Texture,
+	viewType:    Texture2DViewType,
+	format:      Format,
+	mipOffset:   Dim_t,
+	mipNum:      Dim_t, // can be "REMAINING"
+	layerOffset: Dim_t,
+	layerNum:    Dim_t, // can be "REMAINING"
 }
 
-NriTexture3DViewDesc :: struct {
-	texture:     ^NriTexture,
-	viewType:    NriTexture3DViewType,
-	format:      NriFormat,
-	mipOffset:   NriDim_t,
-	mipNum:      NriDim_t, // can be "REMAINING"
-	sliceOffset: NriDim_t,
-	sliceNum:    NriDim_t, // can be "REMAINING"
+Texture3DViewDesc :: struct {
+	texture:     ^Texture,
+	viewType:    Texture3DViewType,
+	format:      Format,
+	mipOffset:   Dim_t,
+	mipNum:      Dim_t, // can be "REMAINING"
+	sliceOffset: Dim_t,
+	sliceNum:    Dim_t, // can be "REMAINING"
 }
 
-NriBufferViewDesc :: struct {
-	buffer:          ^NriBuffer,
-	viewType:        NriBufferViewType,
-	format:          NriFormat,
+BufferViewDesc :: struct {
+	buffer:          ^Buffer,
+	viewType:        BufferViewType,
+	format:          Format,
 	offset:          u64, // expects "memoryAlignment.bufferShaderResourceOffset" for shader resources
 	size:            u64, // can be "WHOLE_SIZE"
 	structureStride: u32, // = structure stride from "BufferDesc" if not provided
 }
 
-NriAddressModes :: struct {
-	u, v, w: NriAddressMode,
+AddressModes :: struct {
+	u, v, w: AddressMode,
 }
 
-NriFilters :: struct {
-	min, mag, mip: NriFilter,
-	ext:           NriReductionMode, // requires "features.textureFilterMinMax"
+Filters :: struct {
+	min, mag, mip: Filter,
+	ext:           ReductionMode, // requires "features.textureFilterMinMax"
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkSamplerCreateInfo.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_sampler_desc
-NriSamplerDesc :: struct {
-	filters:                 NriFilters,
+SamplerDesc :: struct {
+	filters:                 Filters,
 	anisotropy:              u8,
 	mipBias:                 f32,
 	mipMin:                  f32,
 	mipMax:                  f32,
-	addressModes:            NriAddressModes,
-	compareOp:               NriCompareOp,
-	borderColor:             NriColor,
+	addressModes:            AddressModes,
+	compareOp:               CompareOp,
+	borderColor:             Color,
 	isInteger:               bool,
 	unnormalizedCoordinates: bool, // requires "shaderFeatures.unnormalizedCoordinates"
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineBindPoint.html
-NriBindPoint_ :: enum u32 {
+BindPoint :: enum u32 {
 	INHERIT     = 0,
 	GRAPHICS    = 1,
 	COMPUTE     = 2,
@@ -1969,50 +1881,40 @@ NriBindPoint_ :: enum u32 {
 	MAX_NUM     = 4,
 }
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineBindPoint.html
-NriBindPoint          :: u8
-NriPipelineLayoutBits :: u8
-
-NriPipelineLayoutBits_ :: enum u32 {
-	NONE                                   = 0,
-	IGNORE_GLOBAL_SPIRV_OFFSETS            = 1,
-	ENABLE_D3D12_DRAW_PARAMETERS_EMULATION = 2,
-	SAMPLER_HEAP_DIRECTLY_INDEXED          = 4,
-	RESOURCE_HEAP_DIRECTLY_INDEXED         = 8,
+PipelineLayoutBits_ :: enum u32 {
+	IGNORE_GLOBAL_SPIRV_OFFSETS            = 0,
+	ENABLE_D3D12_DRAW_PARAMETERS_EMULATION = 1,
+	SAMPLER_HEAP_DIRECTLY_INDEXED          = 2,
+	RESOURCE_HEAP_DIRECTLY_INDEXED         = 3,
 }
 
-NriDescriptorPoolBits :: u8
+PipelineLayoutBits :: bit_set[PipelineLayoutBits_; i32]
 
-NriDescriptorPoolBits_ :: enum u32 {
-	NONE                   = 0,
-	ALLOW_UPDATE_AFTER_SET = 1,
+DescriptorPoolBits_ :: enum u32 {
+	NriDescriptorPoolBits_ALLOW_UPDATE_AFTER_SET = 0,
 }
 
-NriDescriptorSetBits :: u8
+DescriptorPoolBits :: bit_set[DescriptorPoolBits_; i32]
 
-NriDescriptorSetBits_ :: enum u32 {
-	NONE                   = 0,
-	ALLOW_UPDATE_AFTER_SET = 1,
+DescriptorSetBits_ :: enum u32 {
+	NriDescriptorSetBits_ALLOW_UPDATE_AFTER_SET = 0,
 }
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkDescriptorBindingFlagBits.html
-NriDescriptorRangeBits_ :: enum u32 {
-	NONE                   = 0,
-	PARTIALLY_BOUND        = 1,
-	ARRAY                  = 2,
-	VARIABLE_SIZED_ARRAY   = 4,
-	ALLOW_UPDATE_AFTER_SET = 8,
-	MUTABLE                = 16,
+DescriptorSetBits :: bit_set[DescriptorSetBits_; i32]
+
+DescriptorRangeBits_ :: enum u32 {
+	PARTIALLY_BOUND        = 0,
+	ARRAY                  = 1,
+	VARIABLE_SIZED_ARRAY   = 2,
+	ALLOW_UPDATE_AFTER_SET = 3,
+	MUTABLE                = 4,
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkDescriptorBindingFlagBits.html
-NriDescriptorRangeBits :: u8
+DescriptorRangeBits :: bit_set[DescriptorRangeBits_; i32]
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkDescriptorType.html
-NriDescriptorType :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkDescriptorType.html
-NriDescriptorType_ :: enum u32 {
+DescriptorType :: enum u32 {
 	SAMPLER                   = 0,
 	CONSTANT_BUFFER           = 1,
 	TEXTURE                   = 2,
@@ -2026,64 +1928,64 @@ NriDescriptorType_ :: enum u32 {
 }
 
 // "DescriptorRange" consists of "Descriptor" entities
-NriDescriptorRangeDesc :: struct {
+DescriptorRangeDesc :: struct {
 	baseRegisterIndex: u32,
 	descriptorNum:     u32, // treated as max size if "VARIABLE_SIZED_ARRAY" flag is set
-	descriptorType:    NriDescriptorType,
-	shaderStages:      NriStageBits,
-	flags:             NriDescriptorRangeBits,
+	descriptorType:    DescriptorType,
+	shaderStages:      StageBits,
+	flags:             DescriptorRangeBits,
 }
 
 // "DescriptorSet" consists of "DescriptorRange" entities
-NriDescriptorSetDesc :: struct {
+DescriptorSetDesc :: struct {
 	registerSpace: u32, // must be unique, avoid big gaps
-	ranges:        ^NriDescriptorRangeDesc,
+	ranges:        ^DescriptorRangeDesc,
 	rangeNum:      u32,
-	flags:         NriDescriptorSetBits,
+	flags:         DescriptorSetBits,
 }
 
 // "PipelineLayout" consists of "DescriptorSet" descriptions and root parameters
-NriRootConstantDesc :: struct {
+RootConstantDesc :: struct {
 	registerIndex: u32,
 	size:          u32,
-	shaderStages:  NriStageBits,
+	shaderStages:  StageBits,
 } // aka push constants block
 
-NriRootDescriptorDesc :: struct {
+RootDescriptorDesc :: struct {
 	registerIndex:  u32,
-	descriptorType: NriDescriptorType, // CONSTANT_BUFFER, STRUCTURED_BUFFER or STORAGE_STRUCTURED_BUFFER
-	shaderStages:   NriStageBits,
+	descriptorType: DescriptorType, // CONSTANT_BUFFER, STRUCTURED_BUFFER or STORAGE_STRUCTURED_BUFFER
+	shaderStages:   StageBits,
 } // aka push descriptor
 
 // https://learn.microsoft.com/en-us/windows/win32/direct3d12/root-signature-limits#static-samplers
-NriRootSamplerDesc :: struct {
+RootSamplerDesc :: struct {
 	registerIndex: u32,
-	desc:          NriSamplerDesc,
-	shaderStages:  NriStageBits,
+	desc:          SamplerDesc,
+	shaderStages:  StageBits,
 } // aka static (immutable) sampler
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineLayoutCreateInfo.html
 // https://microsoft.github.io/DirectX-Specs/d3d/ResourceBinding.html#root-signature
 // https://microsoft.github.io/DirectX-Specs/d3d/ResourceBinding.html#root-signature-version-11
-NriPipelineLayoutDesc :: struct {
+PipelineLayoutDesc :: struct {
 	rootRegisterSpace: u32, // must be unique, avoid big gaps
-	rootConstants:     ^NriRootConstantDesc,
+	rootConstants:     ^RootConstantDesc,
 	rootConstantNum:   u32,
-	rootDescriptors:   ^NriRootDescriptorDesc,
+	rootDescriptors:   ^RootDescriptorDesc,
 	rootDescriptorNum: u32,
-	rootSamplers:      ^NriRootSamplerDesc,
+	rootSamplers:      ^RootSamplerDesc,
 	rootSamplerNum:    u32,
-	descriptorSets:    ^NriDescriptorSetDesc,
+	descriptorSets:    ^DescriptorSetDesc,
 	descriptorSetNum:  u32,
-	shaderStages:      NriStageBits,
-	flags:             NriPipelineLayoutBits,
+	shaderStages:      StageBits,
+	flags:             PipelineLayoutBits,
 }
 
 // Descriptor pool
 // https://learn.microsoft.com/en-us/windows/win32/direct3d12/descriptor-heaps
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_descriptor_heap_desc
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkDescriptorPoolCreateInfo.html
-NriDescriptorPoolDesc :: struct {
+DescriptorPoolDesc :: struct {
 	// Maximum number of descriptor sets that can be allocated from this pool
 	descriptorSetMaxNum: u32,
 
@@ -2105,62 +2007,59 @@ NriDescriptorPoolDesc :: struct {
 	storageStructuredBufferMaxNum: u32, // number of "STORAGE_STRUCTURED_BUFFER" descriptors
 	accelerationStructureMaxNum:   u32, // number of "ACCELERATION_STRUCTURE" descriptors, requires "features.rayTracing"
 	mutableMaxNum:                 u32, // number of descriptors for "DescriptorRangeBits::MUTABLE", requires "features.mutableDescriptorType"
-	flags:                         NriDescriptorPoolBits,
+	flags:                         DescriptorPoolBits,
 }
 
 // Updating/initializing descriptors in a descriptor set
-NriUpdateDescriptorRangeDesc :: struct {
+UpdateDescriptorRangeDesc :: struct {
 	// Destination
-	descriptorSet:  ^NriDescriptorSet,
+	descriptorSet:  ^DescriptorSet,
 	rangeIndex:     u32,
 	baseDescriptor: u32,
 
 	// Source & count
-	descriptors:   ^^NriDescriptor,
+	descriptors:   ^^Descriptor,
 	descriptorNum: u32,
 }
 
 // Copying descriptors between descriptor sets
-NriCopyDescriptorRangeDesc :: struct {
+CopyDescriptorRangeDesc :: struct {
 	// Destination
-	dstDescriptorSet:  ^NriDescriptorSet,
+	dstDescriptorSet:  ^DescriptorSet,
 	dstRangeIndex:     u32,
 	dstBaseDescriptor: u32,
 
 	// Source & count
-	srcDescriptorSet:  ^NriDescriptorSet,
+	srcDescriptorSet:  ^DescriptorSet,
 	srcRangeIndex:     u32,
 	srcBaseDescriptor: u32,
 	descriptorNum:     u32, // can be "ALL" (source)
 }
 
 // Binding
-NriSetDescriptorSetDesc :: struct {
+SetDescriptorSetDesc :: struct {
 	setIndex:      u32,
-	descriptorSet: ^NriDescriptorSet,
-	bindPoint:     NriBindPoint,
+	descriptorSet: ^DescriptorSet,
+	bindPoint:     BindPoint,
 }
 
-NriSetRootConstantsDesc :: struct {
+SetRootConstantsDesc :: struct {
 	rootConstantIndex: u32,
 	data:              rawptr,
 	size:              u32,
 	offset:            u32, // requires "features.rootConstantsOffset"
-	bindPoint:         NriBindPoint,
+	bindPoint:         BindPoint,
 } // requires "pipelineLayoutRootConstantMaxSize > 0"
 
-NriSetRootDescriptorDesc :: struct {
+SetRootDescriptorDesc :: struct {
 	rootDescriptorIndex: u32,
-	descriptor:          ^NriDescriptor,
+	descriptor:          ^Descriptor,
 	offset:              u32, // a non-"CONSTANT_BUFFER" descriptor requires "features.nonConstantBufferRootDescriptorOffset"
-	bindPoint:           NriBindPoint,
+	bindPoint:           BindPoint,
 } // requires "pipelineLayoutRootDescriptorMaxNum > 0"
 
 //============================================================================================================================================================================================
-NriIndexType :: u8
-
-//============================================================================================================================================================================================
-NriIndexType_ :: enum u32 {
+IndexType :: enum u32 {
 	//============================================================================================================================================================================================
 	UINT16  = 0,
 
@@ -2171,9 +2070,7 @@ NriIndexType_ :: enum u32 {
 	MAX_NUM = 2,
 }
 
-NriPrimitiveRestart :: u8
-
-NriPrimitiveRestart_ :: enum u32 {
+PrimitiveRestart :: enum u32 {
 	DISABLED       = 0,
 	INDICES_UINT16 = 1,
 	INDICES_UINT32 = 2,
@@ -2181,10 +2078,7 @@ NriPrimitiveRestart_ :: enum u32 {
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkVertexInputRate.html
-NriVertexStreamStepRate :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkVertexInputRate.html
-NriVertexStreamStepRate_ :: enum u32 {
+VertexStreamStepRate :: enum u32 {
 	PER_VERTEX   = 0,
 	PER_INSTANCE = 1,
 	MAX_NUM      = 2,
@@ -2193,12 +2087,7 @@ NriVertexStreamStepRate_ :: enum u32 {
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPrimitiveTopology.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3dcommon/ne-d3dcommon-d3d_primitive_topology
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_primitive_topology_type
-NriTopology :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkPrimitiveTopology.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3dcommon/ne-d3dcommon-d3d_primitive_topology
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_primitive_topology_type
-NriTopology_ :: enum u32 {
+Topology :: enum u32 {
 	POINT_LIST                    = 0,
 	LINE_LIST                     = 1,
 	LINE_STRIP                    = 2,
@@ -2212,54 +2101,50 @@ NriTopology_ :: enum u32 {
 	MAX_NUM                       = 10,
 }
 
-NriInputAssemblyDesc :: struct {
-	topology:            NriTopology,
+InputAssemblyDesc :: struct {
+	topology:            Topology,
 	tessControlPointNum: u8,
-	primitiveRestart:    NriPrimitiveRestart,
+	primitiveRestart:    PrimitiveRestart,
 }
 
-NriVertexAttributeD3D :: struct {
+VertexAttributeD3D :: struct {
 	semanticName:  cstring,
 	semanticIndex: u32,
 }
 
-NriVertexAttributeVK :: struct {
+VertexAttributeVK :: struct {
 	location: u32,
 }
 
-NriVertexAttributeDesc :: struct {
-	d3d:         NriVertexAttributeD3D,
-	vk:          NriVertexAttributeVK,
+VertexAttributeDesc :: struct {
+	d3d:         VertexAttributeD3D,
+	vk:          VertexAttributeVK,
 	offset:      u32,
-	format:      NriFormat,
+	format:      Format,
 	streamIndex: u16,
 }
 
-NriVertexStreamDesc :: struct {
+VertexStreamDesc :: struct {
 	bindingSlot: u16,
-	stepRate:    NriVertexStreamStepRate,
+	stepRate:    VertexStreamStepRate,
 }
 
-NriVertexInputDesc :: struct {
-	attributes:   ^NriVertexAttributeDesc,
+VertexInputDesc :: struct {
+	attributes:   ^VertexAttributeDesc,
 	attributeNum: u8,
-	streams:      ^NriVertexStreamDesc,
+	streams:      ^VertexStreamDesc,
 	streamNum:    u8,
 }
 
-NriVertexBufferDesc :: struct {
-	buffer: ^NriBuffer,
+VertexBufferDesc :: struct {
+	buffer: ^Buffer,
 	offset: u64,
 	stride: u32,
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPolygonMode.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_fill_mode
-NriFillMode :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkPolygonMode.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_fill_mode
-NriFillMode_ :: enum u32 {
+FillMode :: enum u32 {
 	SOLID     = 0,
 	WIREFRAME = 1,
 	MAX_NUM   = 2,
@@ -2267,11 +2152,7 @@ NriFillMode_ :: enum u32 {
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkCullModeFlagBits.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_cull_mode
-NriCullMode :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkCullModeFlagBits.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_cull_mode
-NriCullMode_ :: enum u32 {
+CullMode :: enum u32 {
 	NONE    = 0,
 	FRONT   = 1,
 	BACK    = 2,
@@ -2280,11 +2161,7 @@ NriCullMode_ :: enum u32 {
 
 // https://docs.vulkan.org/samples/latest/samples/extensions/fragment_shading_rate_dynamic/README.html
 // https://microsoft.github.io/DirectX-Specs/d3d/VariableRateShading.html
-NriShadingRate :: u8
-
-// https://docs.vulkan.org/samples/latest/samples/extensions/fragment_shading_rate_dynamic/README.html
-// https://microsoft.github.io/DirectX-Specs/d3d/VariableRateShading.html
-NriShadingRate_ :: enum u32 {
+ShadingRate :: enum u32 {
 	FRAGMENT_SIZE_1X1 = 0,
 	FRAGMENT_SIZE_1X2 = 1,
 	FRAGMENT_SIZE_2X1 = 2,
@@ -2300,14 +2177,7 @@ NriShadingRate_ :: enum u32 {
 //    "primitiveCombiner"      "attachmentCombiner"
 // A   Pipeline shading rate    Result of Op1
 // B   Primitive shading rate   Attachment shading rate
-NriShadingRateCombiner :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkFragmentShadingRateCombinerOpKHR.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_shading_rate_combiner
-//    "primitiveCombiner"      "attachmentCombiner"
-// A   Pipeline shading rate    Result of Op1
-// B   Primitive shading rate   Attachment shading rate
-NriShadingRateCombiner_ :: enum u32 {
+ShadingRateCombiner :: enum u32 {
 	//    "primitiveCombiner"      "attachmentCombiner"
 	// A   Pipeline shading rate    Result of Op1
 	// B   Primitive shading rate   Attachment shading rate
@@ -2353,16 +2223,16 @@ bias = max(bias, clamp)
 
 enabled if constant != 0 or slope != 0
 */
-NriDepthBiasDesc :: struct {
+DepthBiasDesc :: struct {
 	constant: f32,
 	clamp:    f32,
 	slope:    f32,
 }
 
-NriRasterizationDesc :: struct {
-	depthBias:             NriDepthBiasDesc,
-	fillMode:              NriFillMode,
-	cullMode:              NriCullMode,
+RasterizationDesc :: struct {
+	depthBias:             DepthBiasDesc,
+	fillMode:              FillMode,
+	cullMode:              CullMode,
 	frontCounterClockwise: bool,
 	depthClamp:            bool,
 	lineSmoothing:         bool, // requires "features.lineSmoothing"
@@ -2370,21 +2240,21 @@ NriRasterizationDesc :: struct {
 	shadingRate:           bool, // requires "tiers.shadingRate != 0", expects "CmdSetShadingRate" and optionally "AttachmentsDesc::shadingRate"
 }
 
-NriMultisampleDesc :: struct {
+MultisampleDesc :: struct {
 	sampleMask:      u32,  // can be "ALL"
-	sampleNum:       NriSample_t,
+	sampleNum:       Sample_t,
 	alphaToCoverage: bool,
 	sampleLocations: bool, // requires "tiers.sampleLocations != 0", expects "CmdSetSampleLocations"
 }
 
-NriShadingRateDesc :: struct {
-	shadingRate:        NriShadingRate,
-	primitiveCombiner:  NriShadingRateCombiner, // requires "tiers.sampleLocations >= 2"
-	attachmentCombiner: NriShadingRateCombiner, // requires "tiers.sampleLocations >= 2"
+ShadingRateDesc :: struct {
+	shadingRate:        ShadingRate,
+	primitiveCombiner:  ShadingRateCombiner, // requires "tiers.sampleLocations >= 2"
+	attachmentCombiner: ShadingRateCombiner, // requires "tiers.sampleLocations >= 2"
 }
 
 //============================================================================================================================================================================================
-NriMultiview_ :: enum u32 {
+Multiview :: enum u32 {
 	//============================================================================================================================================================================================
 	FLEXIBLE       = 0,
 
@@ -2398,20 +2268,11 @@ NriMultiview_ :: enum u32 {
 	MAX_NUM        = 3,
 }
 
-//============================================================================================================================================================================================
-NriMultiview :: u8
-
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkLogicOp.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_logic_op
 // S - source color 0
 // D - destination color
-NriLogicOp :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkLogicOp.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_logic_op
-// S - source color 0
-// D - destination color
-NriLogicOp_ :: enum u32 {
+LogicOp :: enum u32 {
 	// S - source color 0
 	// D - destination color
 	NONE          = 0,
@@ -2485,7 +2346,7 @@ NriLogicOp_ :: enum u32 {
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_stencil_op
 // R - reference, set by "CmdSetStencilReference"
 // D - stencil buffer
-NriStencilOp_ :: enum u32 {
+StencilOp :: enum u32 {
 	// R - reference, set by "CmdSetStencilReference"
 	// D - stencil buffer
 	KEEP                = 0,
@@ -2523,27 +2384,13 @@ NriStencilOp_ :: enum u32 {
 	MAX_NUM             = 8,
 }
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkStencilOp.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_stencil_op
-// R - reference, set by "CmdSetStencilReference"
-// D - stencil buffer
-NriStencilOp :: u8
-
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkBlendFactor.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_blend
 // S0 - source color 0
 // S1 - source color 1
 // D - destination color
 // C - blend constants, set by "CmdSetBlendConstants"
-NriBlendFactor :: u8 // RGB                               ALPHA
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkBlendFactor.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_blend
-// S0 - source color 0
-// S1 - source color 1
-// D - destination color
-// C - blend constants, set by "CmdSetBlendConstants"
-NriBlendFactor_ :: enum u32 {
+BlendFactor :: enum u32 {
 	// S0 - source color 0
 	// S1 - source color 1
 	// D - destination color
@@ -2671,15 +2518,7 @@ NriBlendFactor_ :: enum u32 {
 // D - destination color
 // Sf - source factor, produced by "BlendFactor"
 // Df - destination factor, produced by "BlendFactor"
-NriBlendOp :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkBlendOp.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_blend_op
-// S - source color
-// D - destination color
-// Sf - source factor, produced by "BlendFactor"
-// Df - destination factor, produced by "BlendFactor"
-NriBlendOp_ :: enum u32 {
+BlendOp :: enum u32 {
 	// S - source color
 	// D - destination color
 	// Sf - source factor, produced by "BlendFactor"
@@ -2717,83 +2556,78 @@ NriBlendOp_ :: enum u32 {
 	MAX_NUM          = 5,
 }
 
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkColorComponentFlagBits.html
-NriColorWriteBits_ :: enum u32 {
-	NONE = 0,
-	R    = 1,
-	G    = 2,
-	B    = 4,
-	A    = 8,
-	RGB  = 7,
-	RGBA = 15,
+ColorWriteBits_ :: enum u32 {
+	R = 0,
+	G = 1,
+	B = 2,
+	A = 3,
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkColorComponentFlagBits.html
-NriColorWriteBits :: u8
+ColorWriteBits      :: bit_set[ColorWriteBits_; i32]
+COLORWRITEBITS_RGBA :: ColorWriteBits {.R, .G, .B, .A}
+COLORWRITEBITS_RGB  :: ColorWriteBits {.R, .G, .B}
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkStencilOpState.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_depth_stencil_desc
-NriStencilDesc :: struct {
-	compareOp:   NriCompareOp, // "compareOp != NONE", expects "CmdSetStencilReference"
-	failOp:      NriStencilOp,
-	passOp:      NriStencilOp,
-	depthFailOp: NriStencilOp,
+StencilDesc :: struct {
+	compareOp:   CompareOp, // "compareOp != NONE", expects "CmdSetStencilReference"
+	failOp:      StencilOp,
+	passOp:      StencilOp,
+	depthFailOp: StencilOp,
 	writeMask:   u8,
 	compareMask: u8,
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineDepthStencilStateCreateInfo.html
-NriDepthAttachmentDesc :: struct {
-	compareOp:  NriCompareOp,
+DepthAttachmentDesc :: struct {
+	compareOp:  CompareOp,
 	write:      bool,
 	boundsTest: bool, // requires "features.depthBoundsTest", expects "CmdSetDepthBounds"
 }
 
-NriStencilAttachmentDesc :: struct {
-	front: NriStencilDesc,
-	back:  NriStencilDesc, // requires "features.independentFrontAndBackStencilReferenceAndMasks" for "back.writeMask"
+StencilAttachmentDesc :: struct {
+	front: StencilDesc,
+	back:  StencilDesc, // requires "features.independentFrontAndBackStencilReferenceAndMasks" for "back.writeMask"
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPipelineColorBlendAttachmentState.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_render_target_blend_desc
-NriBlendDesc :: struct {
-	srcFactor: NriBlendFactor,
-	dstFactor: NriBlendFactor,
-	op:        NriBlendOp,
+BlendDesc :: struct {
+	srcFactor: BlendFactor,
+	dstFactor: BlendFactor,
+	op:        BlendOp,
 }
 
-NriColorAttachmentDesc :: struct {
-	format:         NriFormat,
-	colorBlend:     NriBlendDesc,
-	alphaBlend:     NriBlendDesc,
-	colorWriteMask: NriColorWriteBits,
+ColorAttachmentDesc :: struct {
+	format:         Format,
+	colorBlend:     BlendDesc,
+	alphaBlend:     BlendDesc,
+	colorWriteMask: ColorWriteBits,
 	blendEnabled:   bool,
 }
 
-NriOutputMergerDesc :: struct {
-	colors:             ^NriColorAttachmentDesc,
+OutputMergerDesc :: struct {
+	colors:             ^ColorAttachmentDesc,
 	colorNum:           u32,
-	depth:              NriDepthAttachmentDesc,
-	stencil:            NriStencilAttachmentDesc,
-	depthStencilFormat: NriFormat,
-	logicOp:            NriLogicOp,   // requires "features.logicOp"
-	viewMask:           u32,          // if non-0, requires "viewMaxNum > 1"
-	multiview:          NriMultiview, // if "viewMask != 0", requires "features.(xxx)Multiview"
+	depth:              DepthAttachmentDesc,
+	stencil:            StencilAttachmentDesc,
+	depthStencilFormat: Format,
+	logicOp:            LogicOp,   // requires "features.logicOp"
+	viewMask:           u32,       // if non-0, requires "viewMaxNum > 1"
+	multiview:          Multiview, // if "viewMask != 0", requires "features.(xxx)Multiview"
 }
 
-NriAttachmentsDesc :: struct {
-	depthStencil: ^NriDescriptor,
-	shadingRate:  ^NriDescriptor, // requires "tiers.shadingRate >= 2"
-	colors:       ^^NriDescriptor,
+AttachmentsDesc :: struct {
+	depthStencil: ^Descriptor,
+	shadingRate:  ^Descriptor, // requires "tiers.shadingRate >= 2"
+	colors:       ^^Descriptor,
 	colorNum:     u32,
-	viewMask:     u32,            // if non-0, requires "viewMaxNum > 1"
+	viewMask:     u32,         // if non-0, requires "viewMaxNum > 1"
 }
 
 // https://docs.vulkan.org/guide/latest/robustness.html
-NriRobustness :: u8
-
-// https://docs.vulkan.org/guide/latest/robustness.html
-NriRobustness_ :: enum u32 {
+Robustness :: enum u32 {
 	DEFAULT = 0,
 	OFF     = 1,
 	VK      = 2,
@@ -2802,34 +2636,34 @@ NriRobustness_ :: enum u32 {
 }
 
 // It's recommended to use "NRI.hlsl" in the shader code
-NriShaderDesc :: struct {
-	stage:          NriStageBits,
+ShaderDesc :: struct {
+	stage:          StageBits,
 	bytecode:       rawptr,
 	size:           u64,
 	entryPointName: cstring,
 }
 
-NriGraphicsPipelineDesc :: struct {
-	pipelineLayout: ^NriPipelineLayout,
-	vertexInput:    ^NriVertexInputDesc,
-	inputAssembly:  NriInputAssemblyDesc,
-	rasterization:  NriRasterizationDesc,
-	multisample:    ^NriMultisampleDesc,
-	outputMerger:   NriOutputMergerDesc,
-	shaders:        ^NriShaderDesc,
+GraphicsPipelineDesc :: struct {
+	pipelineLayout: ^PipelineLayout,
+	vertexInput:    ^VertexInputDesc,
+	inputAssembly:  InputAssemblyDesc,
+	rasterization:  RasterizationDesc,
+	multisample:    ^MultisampleDesc,
+	outputMerger:   OutputMergerDesc,
+	shaders:        ^ShaderDesc,
 	shaderNum:      u32,
-	robustness:     NriRobustness,
+	robustness:     Robustness,
 }
 
-NriComputePipelineDesc :: struct {
-	pipelineLayout: ^NriPipelineLayout,
-	shader:         NriShaderDesc,
-	robustness:     NriRobustness,
+ComputePipelineDesc :: struct {
+	pipelineLayout: ^PipelineLayout,
+	shader:         ShaderDesc,
+	robustness:     Robustness,
 }
 
 // https://microsoft.github.io/DirectX-Specs/d3d/CountersAndQueries.html
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueryType.html
-NriQueryType_ :: enum u32 {
+QueryType :: enum u32 {
 	TIMESTAMP                             = 0,
 	TIMESTAMP_COPY_QUEUE                  = 1,
 	OCCLUSION                             = 2,
@@ -2840,19 +2674,15 @@ NriQueryType_ :: enum u32 {
 	MAX_NUM                               = 7,
 }
 
-// https://microsoft.github.io/DirectX-Specs/d3d/CountersAndQueries.html
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueryType.html
-NriQueryType :: u8
-
-NriQueryPoolDesc :: struct {
-	queryType: NriQueryType,
+QueryPoolDesc :: struct {
+	queryType: QueryType,
 	capacity:  u32,
 }
 
 // Data layout for QueryType::PIPELINE_STATISTICS
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueryPipelineStatisticFlagBits.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_query_data_pipeline_statistics
-NriPipelineStatisticsDesc :: struct {
+PipelineStatisticsDesc :: struct {
 	// Common part
 	inputVertexNum:                    u64,
 	inputPrimitiveNum:                 u64,
@@ -2875,14 +2705,14 @@ NriPipelineStatisticsDesc :: struct {
 }
 
 // Command signatures (default)
-NriDrawDesc :: struct {
+DrawDesc :: struct {
 	vertexNum:    u32,
 	instanceNum:  u32,
 	baseVertex:   u32, // vertex buffer offset = CmdSetVertexBuffers.offset + baseVertex * VertexStreamDesc::stride
 	baseInstance: u32,
 } // see NRI_FILL_DRAW_COMMAND
 
-NriDrawIndexedDesc :: struct {
+DrawIndexedDesc :: struct {
 	indexNum:     u32,
 	instanceNum:  u32,
 	baseIndex:    u32, // index buffer offset = CmdSetIndexBuffer.offset + baseIndex * sizeof(CmdSetIndexBuffer.indexType)
@@ -2890,14 +2720,14 @@ NriDrawIndexedDesc :: struct {
 	baseInstance: u32,
 } // see NRI_FILL_DRAW_INDEXED_COMMAND
 
-NriDispatchDesc :: struct {
+DispatchDesc :: struct {
 	x, y, z: u32,
 }
 
 // D3D12: modified draw command signatures, if the bound pipeline layout has "PipelineLayoutBits::ENABLE_D3D12_DRAW_PARAMETERS_EMULATION"
 //  - the following structs must be used instead
 // - "NRI_ENABLE_DRAW_PARAMETERS_EMULATION" must be defined prior inclusion of "NRI.hlsl"
-NriDrawBaseDesc :: struct {
+DrawBaseDesc :: struct {
 	shaderEmulatedBaseVertex:   u32, // root constant
 	shaderEmulatedBaseInstance: u32, // root constant
 	vertexNum:                  u32,
@@ -2906,7 +2736,7 @@ NriDrawBaseDesc :: struct {
 	baseInstance:               u32,
 } // see NRI_FILL_DRAW_COMMAND
 
-NriDrawIndexedBaseDesc :: struct {
+DrawIndexedBaseDesc :: struct {
 	shaderEmulatedBaseVertex:   i32, // root constant
 	shaderEmulatedBaseInstance: u32, // root constant
 	indexNum:                   u32,
@@ -2917,52 +2747,52 @@ NriDrawIndexedBaseDesc :: struct {
 } // see NRI_FILL_DRAW_INDEXED_COMMAND
 
 // Copy
-NriTextureRegionDesc :: struct {
-	x:           NriDim_t,
-	y:           NriDim_t,
-	z:           NriDim_t,
-	width:       NriDim_t, // can be "WHOLE_SIZE" (mip)
-	height:      NriDim_t, // can be "WHOLE_SIZE" (mip)
-	depth:       NriDim_t, // can be "WHOLE_SIZE" (mip)
-	mipOffset:   NriDim_t,
-	layerOffset: NriDim_t,
-	planes:      NriPlaneBits,
+TextureRegionDesc :: struct {
+	x:           Dim_t,
+	y:           Dim_t,
+	z:           Dim_t,
+	width:       Dim_t, // can be "WHOLE_SIZE" (mip)
+	height:      Dim_t, // can be "WHOLE_SIZE" (mip)
+	depth:       Dim_t, // can be "WHOLE_SIZE" (mip)
+	mipOffset:   Dim_t,
+	layerOffset: Dim_t,
+	planes:      PlaneBits,
 }
 
-NriTextureDataLayoutDesc :: struct {
+TextureDataLayoutDesc :: struct {
 	offset:     u64, // a buffer offset must be a multiple of "uploadBufferTextureSliceAlignment" (data placement alignment)
 	rowPitch:   u32, // must be a multiple of "uploadBufferTextureRowAlignment"
 	slicePitch: u32, // must be a multiple of "uploadBufferTextureSliceAlignment"
 }
 
 // Work submission
-NriFenceSubmitDesc :: struct {
-	fence:  ^NriFence,
+FenceSubmitDesc :: struct {
+	fence:  ^Fence,
 	value:  u64,
-	stages: NriStageBits,
+	stages: StageBits,
 }
 
-NriQueueSubmitDesc :: struct {
-	waitFences:       ^NriFenceSubmitDesc,
+QueueSubmitDesc :: struct {
+	waitFences:       ^FenceSubmitDesc,
 	waitFenceNum:     u32,
-	commandBuffers:   ^^NriCommandBuffer,
+	commandBuffers:   ^^CommandBuffer,
 	commandBufferNum: u32,
-	signalFences:     ^NriFenceSubmitDesc,
+	signalFences:     ^FenceSubmitDesc,
 	signalFenceNum:   u32,
-	swapChain:        ^NriSwapChain, // required if "NRILowLatency" is enabled in the swap chain
+	swapChain:        ^SwapChain, // required if "NRILowLatency" is enabled in the swap chain
 }
 
 // Clear
-NriClearDesc :: struct {
-	value:                NriClearValue,
-	planes:               NriPlaneBits,
+ClearDesc :: struct {
+	value:                ClearValue,
+	planes:               PlaneBits,
 	colorAttachmentIndex: u32,
 }
 
 // Required synchronization
 // - variant 1: "SHADER_RESOURCE_STORAGE" access ("SHADER_RESOURCE_STORAGE" layout) and "CLEAR_STORAGE" stage + any shader stage (or "ALL")
 // - variant 2: "CLEAR_STORAGE" access ("SHADER_RESOURCE_STORAGE" layout) and "CLEAR_STORAGE" stage
-NriClearStorageDesc :: struct {
+ClearStorageDesc :: struct {
 	// For any buffers and textures with integer formats:
 	//  - Clears a storage view with bit-precise values, copying the lower "N" bits from "value.[f/ui/i].channel"
 	//    to the corresponding channel, where "N" is the number of bits in the "channel" of the resource format
@@ -2971,18 +2801,15 @@ NriClearStorageDesc :: struct {
 	// For buffers:
 	//  - To avoid discrepancies in behavior between GAPIs use "R32f/ui/i" formats for views
 	//  - D3D: structured buffers are unsupported!
-	storage:         ^NriDescriptor, // a "STORAGE" descriptor
-	value:           NriColor,       // avoid overflow
+	storage:         ^Descriptor, // a "STORAGE" descriptor
+	value:           Color,       // avoid overflow
 	setIndex:        u32,
 	rangeIndex:      u32,
 	descriptorIndex: u32,
 }
 
 //============================================================================================================================================================================================
-NriVendor :: u8
-
-//============================================================================================================================================================================================
-NriVendor_ :: enum u32 {
+Vendor :: enum u32 {
 	//============================================================================================================================================================================================
 	UNKNOWN = 0,
 
@@ -3000,10 +2827,7 @@ NriVendor_ :: enum u32 {
 }
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDeviceType.html
-NriArchitecture :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDeviceType.html
-NriArchitecture_ :: enum u32 {
+Architecture :: enum u32 {
 	UNKNOWN    = 0,
 	INTEGRATED = 1,
 	DESCRETE   = 2,
@@ -3012,35 +2836,31 @@ NriArchitecture_ :: enum u32 {
 
 // https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueueFlagBits.html
 // https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_command_list_type
-NriQueueType :: u8
-
-// https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueueFlagBits.html
-// https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_command_list_type
-NriQueueType_ :: enum u32 {
+QueueType :: enum u32 {
 	GRAPHICS = 0,
 	COMPUTE  = 1,
 	COPY     = 2,
 	MAX_NUM  = 3,
 }
 
-NriAdapterDesc :: struct {
+AdapterDesc :: struct {
 	name:                   [256]i8,
-	uid:                    NriUid_t, // "LUID" (preferred) if "uid.high = 0", or "UUID" otherwise
+	uid:                    Uid_t, // "LUID" (preferred) if "uid.high = 0", or "UUID" otherwise
 	videoMemorySize:        u64,
 	sharedSystemMemorySize: u64,
 	deviceId:               u32,
 	queueNum:               [3]u32,
-	vendor:                 NriVendor,
-	architecture:           NriArchitecture,
+	vendor:                 Vendor,
+	architecture:           Architecture,
 }
 
 // Feature support coverage: https://vulkan.gpuinfo.org/ and https://d3d12infodb.boolka.dev/
-NriDeviceDesc :: struct {
+DeviceDesc :: struct {
 	// Common
-	adapterDesc: NriAdapterDesc, // "queueNum" reflects available number of queues per "QueueType"
-	graphicsAPI: NriGraphicsAPI,
+	adapterDesc: AdapterDesc, // "queueNum" reflects available number of queues per "QueueType"
+	graphicsAPI: GraphicsAPI,
 	nriVersion:  u16,
-	shaderModel: u8,             // major * 10 + minor
+	shaderModel: u8,          // major * 10 + minor
 
 	viewport: struct {
 		maxNum:    u32,
@@ -3050,12 +2870,12 @@ NriDeviceDesc :: struct {
 
 	dimensions: struct {
 		typedBufferMaxDim:     u32,
-		attachmentMaxDim:      NriDim_t,
-		attachmentLayerMaxNum: NriDim_t,
-		texture1DMaxDim:       NriDim_t,
-		texture2DMaxDim:       NriDim_t,
-		texture3DMaxDim:       NriDim_t,
-		textureLayerMaxNum:    NriDim_t,
+		attachmentMaxDim:      Dim_t,
+		attachmentLayerMaxNum: Dim_t,
+		texture1DMaxDim:       Dim_t,
+		texture2DMaxDim:       Dim_t,
+		texture3DMaxDim:       Dim_t,
+		textureLayerMaxNum:    Dim_t,
 	},
 
 	precision: struct {
@@ -3191,9 +3011,9 @@ NriDeviceDesc :: struct {
 	wave: struct {
 		laneMinNum:          u32,
 		laneMaxNum:          u32,
-		waveOpsStages:       NriStageBits, // SM 6.0+ (see "shaderFeatures.waveX")
-		quadOpsStages:       NriStageBits, // SM 6.0+ (see "shaderFeatures.waveQuad")
-		derivativeOpsStages: NriStageBits, // SM 6.6+ (https://microsoft.github.io/DirectX-Specs/d3d/HLSL_SM_6_6_Derivatives.html#derivative-functions)
+		waveOpsStages:       StageBits, // SM 6.0+ (see "shaderFeatures.waveX")
+		quadOpsStages:       StageBits, // SM 6.0+ (see "shaderFeatures.waveQuad")
+		derivativeOpsStages: StageBits, // SM 6.6+ (https://microsoft.github.io/DirectX-Specs/d3d/HLSL_SM_6_6_Derivatives.html#derivative-functions)
 	},
 
 	other: struct {

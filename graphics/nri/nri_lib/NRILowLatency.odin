@@ -1,22 +1,19 @@
 // © 2024 NVIDIA Corporation
 
 // Goal: minimizing latency between input sampling and frame presentation
-package nri
+package nri_lib
 
 when ODIN_OS == .Linux {
 	foreign import lib {"libNRI.a", "libNRI_VK.a", "libNRI_Shared.a", "libNRI_Validation.a", "libNRI_NONE.a", "system:stdc++"}
 } else when ODIN_OS == .Windows {
-	foreign import lib {"libNRI.lib", "libNRI_VK.lib", "libNRI_Shared.lib", "libNRI_Validation.lib", "libNRI_NONE.lib"}
+	foreign import lib {"libNRI.lib", "libNRI_VK.lib", "libNRI_Shared.lib", "libNRI_Validation.lib", "libNRI_NONE.lib", "system:stdc++"}
 }
 
 
 NRI_LOW_LATENCY_H :: 1
 
 // us = microseconds
-NriLatencyMarker :: u8 // Should be called:
-
-// us = microseconds
-NriLatencyMarker_ :: enum u32 {
+LatencyMarker :: enum u32 {
 	// us = microseconds
 	SIMULATION_START    = 0, // Should be called:
 
@@ -36,13 +33,13 @@ NriLatencyMarker_ :: enum u32 {
 	MAX_NUM             = 7, // Should be called:
 } // Should be called:
 
-NriLatencySleepMode :: struct {
+LatencySleepMode :: struct {
 	minIntervalUs:   u32,  // minimum allowed frame interval (0 - no frame rate limit)
 	lowLatencyMode:  bool, // low latency mode enablement
 	lowLatencyBoost: bool, // hint to increase performance to provide additional latency savings at a cost of increased power consumption
 }
 
-NriLatencyReport :: struct {
+LatencyReport :: struct {
 	inputSampleTimeUs:        u64, // when "INPUT_SAMPLE" marker is set
 	simulationStartTimeUs:    u64, // when "SIMULATION_START" marker is set
 	simulationEndTimeUs:      u64, // when "SIMULATION_END" marker is set
@@ -61,10 +58,10 @@ NriLatencyReport :: struct {
 // Multi-swapchain is supported only by VK
 // "QueueSubmitDesc::swapChain" must be used to associate work submission with a low latency swap chain
 // Threadsafe: no
-NriLowLatencyInterface :: struct {
-	SetLatencySleepMode: proc "c" (swapChain: ^NriSwapChain, latencySleepMode: ^NriLatencySleepMode) -> NriResult,
-	SetLatencyMarker:    proc "c" (swapChain: ^NriSwapChain, latencyMarker: NriLatencyMarker) -> NriResult,
-	LatencySleep:        proc "c" (swapChain: ^NriSwapChain) -> NriResult, // call once before "INPUT_SAMPLE"
-	GetLatencyReport:    proc "c" (swapChain: ^NriSwapChain, latencyReport: ^NriLatencyReport) -> NriResult,
+LowLatencyInterface :: struct {
+	SetLatencySleepMode: proc "c" (swapChain: ^SwapChain, latencySleepMode: ^LatencySleepMode) -> Result,
+	SetLatencyMarker:    proc "c" (swapChain: ^SwapChain, latencyMarker: LatencyMarker) -> Result,
+	LatencySleep:        proc "c" (swapChain: ^SwapChain) -> Result, // call once before "INPUT_SAMPLE"
+	GetLatencyReport:    proc "c" (swapChain: ^SwapChain, latencyReport: ^LatencyReport) -> Result,
 }
 
