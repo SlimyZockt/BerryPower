@@ -8,11 +8,26 @@ import "core:slice"
 import glfw "vendor:glfw"
 import vk "vendor:vulkan"
 
+
+VKVersion :: bit_field u32 {
+	patch: u32 | 12,
+	minor: u32 | 10,
+	major: u32 | 10,
+}
+
 ENABLE_VALIDATION_LAYERS :: #config(ENABLE_VALIDATION_LAYERS, ODIN_DEBUG)
 
-APP_VERSION := vk.MAKE_VERSION(1, 0, 0)
-ENGINE_VERSION := vk.MAKE_VERSION(1, 0, 0)
+APP_VERSION :: VKVersion {
+	major = 1,
+	minor = 0,
+	patch = 0,
+}
 
+ENGINE_VERSION :: VKVersion {
+	major = 1,
+	minor = 0,
+	patch = 0,
+}
 
 g_context: runtime.Context
 g_framebuffer_resized: bool
@@ -22,7 +37,6 @@ g_arena: vmem.Arena
 main :: proc() {
 	context.logger = log.create_console_logger()
 	g_context = context
-
 
 	ensure(vmem.arena_init_growing(&g_arena) == .None)
 	allocators: vk.AllocationCallbacks
@@ -150,9 +164,9 @@ main :: proc() {
 
 		ensure(glfw.CreateWindowSurface(instance, window_handel, nil, &surface) == .SUCCESS)
 
-        { // Pick Gpu
-
-        }
+		{ 	// Pick Gpu
+			// display: ^vk.wl_display = glfw.GetWaylandDisplay()
+		}
 	}
 
 	defer { 	// Cleanup Vulkan
